@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="MatchLens — a browser-based soccer video review and manual event-tagging tool."
+    />
+    <title>MatchLens | Football Video Analysis</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="MatchLens home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img">
+              <path d="M24 5 9 13.5v21L24 43l15-8.5v-21L24 5Z" />
+              <circle cx="24" cy="24" r="7" />
+              <path d="m24 17-6-4m13 11 7-2M24 31v11M17.8 27.6 10 33" />
+            </svg>
+          </span>
+          <span>Match<span>Lens</span></span>
+        </a>
+        <div class="manual-badge"><span></span> Manual analysis mode</div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <p class="eyebrow">FOOTBALL INTELLIGENCE PLATFORM</p>
+            <h1>See the match.<br /><span>Understand the moment.</span></h1>
+            <p class="hero-copy">Video analysis for players, coaches &amp; scouts.</p>
+          </div>
+          <div class="hero-graphic" aria-hidden="true">
+            <div class="pitch">
+              <span class="pitch-line center-line"></span>
+              <span class="pitch-line center-circle"></span>
+              <span class="player-dot dot-1"></span>
+              <span class="player-dot dot-2"></span>
+              <span class="player-dot dot-3"></span>
+              <span class="player-dot dot-4"></span>
+              <svg class="play-path" viewBox="0 0 300 160">
+                <path d="M50 118 Q95 38 148 84 T250 36" />
+                <path d="m238 28 13 8-13 8" />
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace-grid">
+          <article class="panel video-panel">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">01 / FOOTAGE</p>
+                <h2>Match footage</h2>
+              </div>
+              <label class="button secondary upload-button" for="video-input">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
+                </svg>
+                Select MP4
+              </label>
+              <input id="video-input" type="file" accept="video/mp4,.mp4" hidden />
+            </div>
+
+            <div id="video-empty" class="video-empty">
+              <div class="empty-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 5.5v13l10-6.5L8 5.5Z" />
+                </svg>
+              </div>
+              <strong>Load your match footage</strong>
+              <span>Select an MP4 file to begin analysis. Your video stays on this device.</span>
+              <label class="text-button" for="video-input">Choose a video →</label>
+            </div>
+            <video id="match-video" controls preload="metadata" hidden></video>
+
+            <div id="video-meta" class="video-meta" hidden>
+              <div class="file-summary">
+                <div class="file-icon">MP4</div>
+                <div>
+                  <strong id="meta-name">—</strong>
+                  <span>Local file • never uploaded</span>
+                </div>
+              </div>
+              <dl class="meta-stats">
+                <div><dt>Duration</dt><dd id="meta-duration">—</dd></div>
+                <div><dt>Resolution</dt><dd id="meta-resolution">—</dd></div>
+                <div><dt>File size</dt><dd id="meta-size">—</dd></div>
+              </dl>
+            </div>
+          </article>
+
+          <article class="panel tracker-panel">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">02 / TAG EVENTS</p>
+                <h2>Match Event Tracker</h2>
+              </div>
+              <span class="live-indicator"><span></span> Ready</span>
+            </div>
+            <p class="section-note">Log actions manually while reviewing the footage.</p>
+
+            <form id="event-form">
+              <div class="form-row timestamp-row">
+                <label for="timestamp">Timestamp</label>
+                <div class="field-with-action">
+                  <input
+                    id="timestamp"
+                    name="timestamp"
+                    type="text"
+                    inputmode="numeric"
+                    value="00:00"
+                    placeholder="MM:SS"
+                    pattern="(?:\d+:)?[0-5]?\d:[0-5]\d|\d+:[0-5]\d"
+                    required
+                  />
+                  <button id="use-video-time" class="inline-button" type="button" disabled>
+                    Use video time
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-row two-columns">
+                <div>
+                  <label for="player">Player name</label>
+                  <input
+                    id="player"
+                    name="player"
+                    type="text"
+                    list="player-suggestions"
+                    maxlength="60"
+                    placeholder="e.g. Alex Morgan"
+                    autocomplete="off"
+                    required
+                  />
+                  <datalist id="player-suggestions"></datalist>
+                </div>
+                <div>
+                  <label for="event-type">Event type</label>
+                  <select id="event-type" name="eventType">
+                    <option>Pass</option>
+                    <option>Shot</option>
+                    <option>Goal</option>
+                    <option>Dribble</option>
+                    <option>Tackle</option>
+                    <option>Interception</option>
+                    <option>Turnover</option>
+                    <option>Foul</option>
+                  </select>
+                </div>
+              </div>
+
+              <fieldset class="form-row">
+                <legend>Outcome</legend>
+                <div class="segmented">
+                  <label>
+                    <input type="radio" name="outcome" value="Successful" checked />
+                    <span class="success-option">Successful</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="outcome" value="Unsuccessful" />
+                    <span class="fail-option">Unsuccessful</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="form-row">
+                <label for="notes">Notes <span class="optional">Optional</span></label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  rows="3"
+                  maxlength="240"
+                  placeholder="Position, phase of play, context..."
+                ></textarea>
+              </div>
+
+              <button class="button primary record-button" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Record event
+                <span>Enter ↵</span>
+              </button>
+            </form>
+          </article>
+        </section>
+
+        <section class="section-block" aria-labelledby="stats-heading">
+          <div class="section-heading block-heading">
+            <div>
+              <p class="section-kicker">03 / OVERVIEW</p>
+              <h2 id="stats-heading">Match statistics</h2>
+            </div>
+          </div>
+          <div id="stats-grid" class="stats-grid"></div>
+        </section>
+
+        <section class="panel events-panel">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">04 / EVENT LOG</p>
+              <h2>Recorded events <span id="event-count" class="count-pill">0</span></h2>
+            </div>
+            <div class="table-actions">
+              <button id="export-csv" class="button secondary compact" type="button" disabled>
+                Export CSV
+              </button>
+              <button id="clear-events" class="button danger compact" type="button" disabled>
+                Clear all
+              </button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Player</th>
+                  <th>Event</th>
+                  <th>Outcome</th>
+                  <th>Notes</th>
+                  <th><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="events-body"></tbody>
+            </table>
+            <div id="events-empty" class="table-empty">
+              <strong>No events recorded yet</strong>
+              <span>Your manually tagged match events will appear here.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel player-panel">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">05 / PLAYER REPORT</p>
+              <h2>Player Analysis</h2>
+            </div>
+            <label class="select-label" for="player-filter">
+              <span>Player</span>
+              <select id="player-filter" disabled>
+                <option value="">No players yet</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="player-empty" class="player-empty">
+            Record an event to generate an individual player report.
+          </div>
+          <div id="player-content" hidden>
+            <div id="player-stats" class="player-stats"></div>
+            <div class="performance-summary">
+              <div class="summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 19V9m5 10V5m5 14v-7m5 7V3" />
+                </svg>
+              </div>
+              <div>
+                <p>PERFORMANCE SUMMARY</p>
+                <p id="performance-summary"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <div class="brand footer-brand">
+          <span class="brand-mark small" aria-hidden="true">ML</span>
+          <span>Match<span>Lens</span></span>
+        </div>
+        <p>Manual tagging MVP • Data saved locally in your browser</p>
+      </footer>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
